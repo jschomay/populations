@@ -1,0 +1,32 @@
+/* colors:
+ * green #2A2C05
+ * white #EFE0B9 
+ * yellow #E4B04A 
+ * borwn #643B0F 
+ * orange #B7521E */ 
+
+body {
+  background: #643B0F;
+}
+
+.populations {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.island-tile {
+  padding: 20px 0;
+  margin: 20px 50px;
+  min-width: 200px;
+}
+
+.island-tile__name {
+  color: #E4B04A;
+  font-size: 2em;
+  margin: 20px 0;
+}
+
+.island-tile__population {
+  color: #EFE0B9;
+  font-size: 1.8em;
+}

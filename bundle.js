@@ -72,16 +72,87 @@
 
 var _hyperapp = __webpack_require__(1);
 
+var _data = __webpack_require__(4);
+
+var _data2 = _interopRequireDefault(_data);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var pigPopluation = _data2.default["PIG POPULATIONS"];
+
+var byYear = function byYear(year, data) {
+  return data.filter(function (point) {
+    return point["YEAR"] == year;
+  });
+};
+var byIsland = function byIsland(island, data) {
+  return data.filter(function (point) {
+    return point["ISLAND"] == island;
+  });
+};
+var getPopulation = function getPopulation(year, island) {
+  return byIsland(island, byYear(year, pigPopluation))[0]["WILD PIG POPULATION"];
+};
+
+var state = {
+  year: 2000
+};
+
 (0, _hyperapp.app)({
-  state: "Hi.",
-  view: function view(state) {
+  state: state,
+  view: function view(state, actions) {
+    var addIsland = function addIsland(name) {
+      return (0, _hyperapp.h)(IslandTile, { island: name, population: getPopulation(state.year, name) });
+    };
+
     return (0, _hyperapp.h)(
-      "h1",
+      "div",
       null,
-      state
+      (0, _hyperapp.h)(
+        "button",
+        { onclick: actions.up },
+        state.year
+      ),
+      (0, _hyperapp.h)(
+        "div",
+        { "class": "populations" },
+        addIsland("HAWAII"),
+        addIsland("MAUI"),
+        addIsland("OAHU"),
+        addIsland("KAUAI"),
+        addIsland("MOLOKAI"),
+        addIsland("LANAI"),
+        addIsland("NIIHAU"),
+        addIsland("KAHOOLAWE")
+      )
     );
+  },
+  actions: {
+    up: function up(_ref) {
+      var year = _ref.year;
+      return { year: year + 1 };
+    }
   }
 });
+
+var IslandTile = function IslandTile(_ref2) {
+  var island = _ref2.island,
+      population = _ref2.population;
+  return (0, _hyperapp.h)(
+    "div",
+    { "class": "island-tile" },
+    (0, _hyperapp.h)(
+      "h3",
+      { "class": "island-tile__name" },
+      island
+    ),
+    (0, _hyperapp.h)(
+      "div",
+      { "class": "island-tile__population" },
+      population
+    )
+  );
+};
 
 /***/ }),
 /* 1 */
@@ -444,6 +515,12 @@ function app(app) {
   }
 }
 
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+module.exports = {"PIG POPULATIONS":[{"YEAR":2000,"ISLAND":"HAWAII","WILD PIG POPULATION":5260},{"YEAR":2000,"ISLAND":"MAUI","WILD PIG POPULATION":1250},{"YEAR":2000,"ISLAND":"OAHU","WILD PIG POPULATION":11900},{"YEAR":2000,"ISLAND":"KAUAI","WILD PIG POPULATION":490},{"YEAR":2000,"ISLAND":"MOLOKAI","WILD PIG POPULATION":1200},{"YEAR":2000,"ISLAND":"LANAI","WILD PIG POPULATION":590},{"YEAR":2000,"ISLAND":"NIIHAU","WILD PIG POPULATION":40},{"YEAR":2000,"ISLAND":"KAHOOLAWE","WILD PIG POPULATION":790},{"YEAR":2001,"ISLAND":"HAWAII","WILD PIG POPULATION":14225},{"YEAR":2001,"ISLAND":"MAUI","WILD PIG POPULATION":5690},{"YEAR":2001,"ISLAND":"OAHU","WILD PIG POPULATION":13440},{"YEAR":2001,"ISLAND":"KAUAI","WILD PIG POPULATION":1700},{"YEAR":2001,"ISLAND":"MOLOKAI","WILD PIG POPULATION":3890},{"YEAR":2001,"ISLAND":"LANAI","WILD PIG POPULATION":620},{"YEAR":2001,"ISLAND":"NIIHAU","WILD PIG POPULATION":50},{"YEAR":2001,"ISLAND":"KAHOOLAWE","WILD PIG POPULATION":560},{"YEAR":2002,"ISLAND":"HAWAII","WILD PIG POPULATION":9310},{"YEAR":2002,"ISLAND":"MAUI","WILD PIG POPULATION":4360},{"YEAR":2002,"ISLAND":"OAHU","WILD PIG POPULATION":6780},{"YEAR":2002,"ISLAND":"KAUAI","WILD PIG POPULATION":1060},{"YEAR":2002,"ISLAND":"MOLOKAI","WILD PIG POPULATION":2980},{"YEAR":2002,"ISLAND":"LANAI","WILD PIG POPULATION":120},{"YEAR":2002,"ISLAND":"NIIHAU","WILD PIG POPULATION":20},{"YEAR":2002,"ISLAND":"KAHOOLAWE","WILD PIG POPULATION":870},{"YEAR":2003,"ISLAND":"HAWAII","WILD PIG POPULATION":6900},{"YEAR":2003,"ISLAND":"MAUI","WILD PIG POPULATION":3450},{"YEAR":2003,"ISLAND":"OAHU","WILD PIG POPULATION":8240},{"YEAR":2003,"ISLAND":"KAUAI","WILD PIG POPULATION":1022},{"YEAR":2003,"ISLAND":"MOLOKAI","WILD PIG POPULATION":3350},{"YEAR":2003,"ISLAND":"LANAI","WILD PIG POPULATION":130},{"YEAR":2003,"ISLAND":"NIIHAU","WILD PIG POPULATION":30},{"YEAR":2003,"ISLAND":"KAHOOLAWE","WILD PIG POPULATION":510},{"YEAR":2004,"ISLAND":"HAWAII","WILD PIG POPULATION":7880},{"YEAR":2004,"ISLAND":"MAUI","WILD PIG POPULATION":2600},{"YEAR":2004,"ISLAND":"OAHU","WILD PIG POPULATION":2800},{"YEAR":2004,"ISLAND":"KAUAI","WILD PIG POPULATION":1000},{"YEAR":2004,"ISLAND":"MOLOKAI","WILD PIG POPULATION":2810},{"YEAR":2004,"ISLAND":"LANAI","WILD PIG POPULATION":420},{"YEAR":2004,"ISLAND":"NIIHAU","WILD PIG POPULATION":60},{"YEAR":2004,"ISLAND":"KAHOOLAWE","WILD PIG POPULATION":380},{"YEAR":2005,"ISLAND":"HAWAII","WILD PIG POPULATION":3590},{"YEAR":2005,"ISLAND":"MAUI","WILD PIG POPULATION":2770},{"YEAR":2005,"ISLAND":"OAHU","WILD PIG POPULATION":2040},{"YEAR":2005,"ISLAND":"KAUAI","WILD PIG POPULATION":590},{"YEAR":2005,"ISLAND":"MOLOKAI","WILD PIG POPULATION":3140},{"YEAR":2005,"ISLAND":"LANAI","WILD PIG POPULATION":190},{"YEAR":2005,"ISLAND":"NIIHAU","WILD PIG POPULATION":40},{"YEAR":2005,"ISLAND":"KAHOOLAWE","WILD PIG POPULATION":420}]}
 
 /***/ })
 /******/ ]);
