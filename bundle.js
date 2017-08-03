@@ -78,7 +78,11 @@ var _data2 = _interopRequireDefault(_data);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var pigPopluation = _data2.default["PIG POPULATIONS"];
+// given discrete data
+var pigPopluations = _data2.default["PIG POPULATIONS"];
+var islands = ["HAWAII", "MAUI", "OAHU", "KAUAI", "MOLOKAI", "LANAI", "NIIHAU", "KAHOOLAWE"];
+var firstYear = 2000;
+var lastYear = 2005;
 
 var byYear = function byYear(year, data) {
   return data.filter(function (point) {
@@ -91,17 +95,17 @@ var byIsland = function byIsland(island, data) {
   });
 };
 var getPopulation = function getPopulation(year, island) {
-  return byIsland(island, byYear(year, pigPopluation))[0]["WILD PIG POPULATION"];
+  return byIsland(island, byYear(year, pigPopluations))[0]["WILD PIG POPULATION"];
 };
 
 var state = {
-  year: 2000
-};
+  year: firstYear
 
-(0, _hyperapp.app)({
+  // using hyperapp (https://hyperapp.js.org/), a 1kb version of redux + react (stateless components)
+};(0, _hyperapp.app)({
   state: state,
   view: function view(state, actions) {
-    var addIsland = function addIsland(name) {
+    var addIslandTile = function addIslandTile(name) {
       return (0, _hyperapp.h)(IslandTile, { island: name, population: getPopulation(state.year, name) });
     };
 
@@ -115,29 +119,61 @@ var state = {
       ),
       (0, _hyperapp.h)(
         "div",
+        { "class": "timeline-wrapper" },
+        (0, _hyperapp.h)(Timeline, { minYear: firstYear, maxYear: lastYear, currentYear: state.year })
+      ),
+      (0, _hyperapp.h)(
+        "div",
         { "class": "populations" },
-        addIsland("HAWAII"),
-        addIsland("MAUI"),
-        addIsland("OAHU"),
-        addIsland("KAUAI"),
-        addIsland("MOLOKAI"),
-        addIsland("LANAI"),
-        addIsland("NIIHAU"),
-        addIsland("KAHOOLAWE")
+        islands.map(addIslandTile)
       )
     );
   },
   actions: {
     up: function up(_ref) {
       var year = _ref.year;
-      return { year: year + 1 };
+      return { year: year == lastYear ? firstYear : year + 1 };
     }
   }
 });
 
-var IslandTile = function IslandTile(_ref2) {
-  var island = _ref2.island,
-      population = _ref2.population;
+var Timeline = function Timeline(_ref2) {
+  var minYear = _ref2.minYear,
+      maxYear = _ref2.maxYear,
+      currentYear = _ref2.currentYear;
+
+  var range = function range(min, max) {
+    return Array.apply(null, Array(max - min + 1)).map(function (_, i) {
+      return i + min;
+    });
+  };
+  var years = range(minYear, maxYear);
+
+  return (0, _hyperapp.h)(
+    "div",
+    { "class": "timeline" },
+    (0, _hyperapp.h)(
+      "div",
+      { "class": "timeline__indicator-wrapper" },
+      (0, _hyperapp.h)("div", { "class": "timeline__indicator", style: { marginLeft: 100 * (currentYear - minYear) / (maxYear - minYear) + "%" } })
+    ),
+    (0, _hyperapp.h)(
+      "div",
+      { "class": "timeline__legend" },
+      years.map(function (year, i) {
+        return (0, _hyperapp.h)(
+          "span",
+          { "class": "timeline__year", style: { marginLeft: 100 * i / (years.length - 1) + "%" } },
+          year
+        );
+      })
+    )
+  );
+};
+
+var IslandTile = function IslandTile(_ref3) {
+  var island = _ref3.island,
+      population = _ref3.population;
   return (0, _hyperapp.h)(
     "div",
     { "class": "island-tile" },
