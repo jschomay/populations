@@ -15,6 +15,7 @@ const byIsland = (island, data) => data.filter(point => point["ISLAND"] == islan
 const getPopulation = (year, island) => byIsland(island, byYear(year, pigPopluations))[0]["WILD PIG POPULATION"];
 
 // helpers
+const range = (min, max) => Array.apply(null, Array(max - min)).map((_, i) => i + min);
 const getParam = param => {
   let value = location.search.slice(1).split("&").filter((s) => s.split("=")[0] == param )[0];
   return value && value.split("=")[1];
@@ -59,6 +60,7 @@ app({
         <div class="populations">
           { islands.map(addIslandTile) }
         </div>
+        <footer>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></footer>
       </div>
     )
   },
@@ -109,8 +111,7 @@ const PlayControls = ({playing, speed, slower, toggle, faster}) => {
 }
 
 const Timeline = ({minYear, maxYear, currentYear}) => {
-  let range = (min, max) => Array.apply(null, Array(max - min + 1)).map((_, i) => i + min);
-  let years = range(minYear, maxYear);
+  let years = range(minYear, maxYear + 1);
 
   return (
     <div class="timeline">
@@ -124,8 +125,25 @@ const Timeline = ({minYear, maxYear, currentYear}) => {
     )
 }
 
-const IslandTile = ({island, population}) =>
-  <div class="island-tile">
-    <h3 class="island-tile__name">{ island }</h3>
-    <div class="island-tile__population">{ population }</div>
-  </div>
+const IslandTile = ({island, population}) => {
+  let thousands = Math.floor(population / 1000);
+  let remainder = (population % 1000) / 1000;
+  let pigEl = percent =>
+        <div class="island-tile__pig-wrapper">
+          <div class="island-tile__pig" style={{width: (percent * 100) + "%"}}></div>
+        </div>
+
+  return (
+    <div class="island-tile">
+      <h3 class="island-tile__name">
+        { island }
+        <span class="island-tile__population">({population})</span>
+      </h3>
+      <div class="island-tile__pigs">
+        {range(0, thousands).map(i => pigEl(1))}
+        {pigEl(remainder)}
+      </div>
+    </div>
+    )
+}
+

@@ -102,6 +102,11 @@ var getPopulation = function getPopulation(year, island) {
 };
 
 // helpers
+var range = function range(min, max) {
+  return Array.apply(null, Array(max - min)).map(function (_, i) {
+    return i + min;
+  });
+};
 var getParam = function getParam(param) {
   var value = location.search.slice(1).split("&").filter(function (s) {
     return s.split("=")[0] == param;
@@ -164,6 +169,28 @@ var state = {
         "div",
         { "class": "populations" },
         islands.map(addIslandTile)
+      ),
+      (0, _hyperapp.h)(
+        "footer",
+        null,
+        "Icons made by ",
+        (0, _hyperapp.h)(
+          "a",
+          { href: "http://www.freepik.com", title: "Freepik" },
+          "Freepik"
+        ),
+        " from ",
+        (0, _hyperapp.h)(
+          "a",
+          { href: "https://www.flaticon.com/", title: "Flaticon" },
+          "www.flaticon.com"
+        ),
+        " is licensed by ",
+        (0, _hyperapp.h)(
+          "a",
+          { href: "http://creativecommons.org/licenses/by/3.0/", title: "Creative Commons BY 3.0", target: "_blank" },
+          "CC 3.0 BY"
+        )
       )
     );
   },
@@ -251,12 +278,7 @@ var Timeline = function Timeline(_ref6) {
       maxYear = _ref6.maxYear,
       currentYear = _ref6.currentYear;
 
-  var range = function range(min, max) {
-    return Array.apply(null, Array(max - min + 1)).map(function (_, i) {
-      return i + min;
-    });
-  };
-  var years = range(minYear, maxYear);
+  var years = range(minYear, maxYear + 1);
 
   return (0, _hyperapp.h)(
     "div",
@@ -283,18 +305,39 @@ var Timeline = function Timeline(_ref6) {
 var IslandTile = function IslandTile(_ref7) {
   var island = _ref7.island,
       population = _ref7.population;
+
+  var thousands = Math.floor(population / 1000);
+  var remainder = population % 1000 / 1000;
+  var pigEl = function pigEl(percent) {
+    return (0, _hyperapp.h)(
+      "div",
+      { "class": "island-tile__pig-wrapper" },
+      (0, _hyperapp.h)("div", { "class": "island-tile__pig", style: { width: percent * 100 + "%" } })
+    );
+  };
+
   return (0, _hyperapp.h)(
     "div",
     { "class": "island-tile" },
     (0, _hyperapp.h)(
       "h3",
       { "class": "island-tile__name" },
-      island
+      island,
+      (0, _hyperapp.h)(
+        "span",
+        { "class": "island-tile__population" },
+        "(",
+        population,
+        ")"
+      )
     ),
     (0, _hyperapp.h)(
       "div",
-      { "class": "island-tile__population" },
-      population
+      { "class": "island-tile__pigs" },
+      range(0, thousands).map(function (i) {
+        return pigEl(1);
+      }),
+      pigEl(remainder)
     )
   );
 };
