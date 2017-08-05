@@ -32,6 +32,7 @@ footer, footer a {
 
 .timeline-wrapper {
   width: 50%;
+  min-width: 300px;
   margin: auto;
 }
 
@@ -89,7 +90,11 @@ footer, footer a {
 }
 
 .play-controls__toggle--pause::before {
-  content: "\2590\A0\258C";
+  content: "";
+  width: 4px;
+  height: 16px;
+  border-right: 4px solid #EFE0B9;
+  border-left: 4px solid #EFE0B9;
 }
 
 .play-controls__yps {
