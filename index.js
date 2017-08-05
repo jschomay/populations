@@ -45,6 +45,8 @@ app({
 
     return (
       <div>
+        <h1>Hawaiian Pig Population</h1>
+        <div class="legend"><img src="img/pig-icon.svg" width="30" height="30" style={{marginBottom: "-8px"}} /> = 1000 pigs</div>
         <div class="play-controls-wrapper">
           <PlayControls
             playing={playing}

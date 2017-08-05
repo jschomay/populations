@@ -146,6 +146,17 @@ var state = {
       "div",
       null,
       (0, _hyperapp.h)(
+        "h1",
+        null,
+        "Hawaiian Pig Population"
+      ),
+      (0, _hyperapp.h)(
+        "div",
+        { "class": "legend" },
+        (0, _hyperapp.h)("img", { src: "img/pig-icon.svg", width: "30", height: "30", style: { marginBottom: "-8px" } }),
+        " = 1000 pigs"
+      ),
+      (0, _hyperapp.h)(
         "div",
         { "class": "play-controls-wrapper" },
         (0, _hyperapp.h)(PlayControls, {

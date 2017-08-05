@@ -10,11 +10,22 @@ body {
   font-family: arial;
 }
 
+h1 {
+  font-size: 2.8em;
+  font-weight: bold;
+  text-align: center;
+  color: black;
+}
+
 footer, footer a {
   text-align: center;
   color: #E4B04A;
   margin-top: 5em;
   font-size: 0.5em;
+}
+
+.legend {
+  text-align: center;
 }
 
 .populations {
