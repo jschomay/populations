@@ -101,14 +101,32 @@ var getPopulation = function getPopulation(year, island) {
   return byIsland(island, byYear(year, pigPopluations))[0]["WILD PIG POPULATION"];
 };
 
-var state = {
-  currentYear: firstYear,
-  playing: true,
-  speed: 2,
-  lastFrameTimeStamp: performance.now()
+// helpers
+var getParam = function getParam(param) {
+  var value = location.search.slice(1).split("&").filter(function (s) {
+    return s.split("=")[0] == param;
+  })[0];
+  return value && value.split("=")[1];
+};
+var validYear = function validYear(year) {
+  var y = parseInt(year);
+  return y >= firstYear && y <= lastYear ? y : undefined;
+};
+var validSpeed = function validSpeed(year) {
+  var y = parseFloat(year);
+  return y >= minSpeed && y <= maxSpeed ? y : undefined;
+};
 
-  // using hyperapp (https://hyperapp.js.org/), a 1kb version of redux + react (stateless components)
-};(0, _hyperapp.app)({
+// app
+// using hyperapp (https://hyperapp.js.org/), a 1kb version of redux + react (stateless components)
+var state = {
+  currentYear: validYear(getParam("year")) || firstYear,
+  playing: getParam("pause") ? false : true,
+  speed: validSpeed(getParam("speed")) || 2,
+  lastFrameTimeStamp: performance.now()
+};
+
+(0, _hyperapp.app)({
   state: state,
   view: function view(_ref, actions) {
     var currentYear = _ref.currentYear,

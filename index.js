@@ -14,14 +14,29 @@ const byYear = (year, data) => data.filter(point => point["YEAR"] == year);
 const byIsland = (island, data) => data.filter(point => point["ISLAND"] == island);
 const getPopulation = (year, island) => byIsland(island, byYear(year, pigPopluations))[0]["WILD PIG POPULATION"];
 
+// helpers
+const getParam = param => {
+  let value = location.search.slice(1).split("&").filter((s) => s.split("=")[0] == param )[0];
+  return value && value.split("=")[1];
+}
+const validYear = (year) => {
+  let y = parseInt(year);
+  return y >= firstYear && y <= lastYear ? y : undefined;
+}
+const validSpeed = (year) => {
+  let y = parseFloat(year);
+  return y >= minSpeed && y <= maxSpeed ? y : undefined;
+}
+
+// app
+// using hyperapp (https://hyperapp.js.org/), a 1kb version of redux + react (stateless components)
 const state = {
-  currentYear: firstYear,
-  playing: true,
-  speed: 2,
+  currentYear: validYear(getParam("year")) || firstYear,
+  playing: getParam("pause") ? false : true,
+  speed: validSpeed(getParam("speed")) || 2,
   lastFrameTimeStamp: performance.now()
 }
 
-// using hyperapp (https://hyperapp.js.org/), a 1kb version of redux + react (stateless components)
 app({
   state: state,
   view: ({currentYear, playing, speed}, actions) => {
