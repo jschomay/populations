@@ -83,6 +83,9 @@ var pigPopluations = _data2.default["PIG POPULATIONS"];
 var islands = ["HAWAII", "MAUI", "OAHU", "KAUAI", "MOLOKAI", "LANAI", "NIIHAU", "KAHOOLAWE"];
 var firstYear = 2000;
 var lastYear = 2005;
+var speedChangeAmount = 0.5;
+var minSpeed = 0.5;
+var maxSpeed = 5;
 
 var byYear = function byYear(year, data) {
   return data.filter(function (point) {
@@ -99,28 +102,45 @@ var getPopulation = function getPopulation(year, island) {
 };
 
 var state = {
-  year: firstYear
+  currentYear: firstYear,
+  playing: true,
+  speed: 2,
+  lastFrameTimeStamp: performance.now()
 
   // using hyperapp (https://hyperapp.js.org/), a 1kb version of redux + react (stateless components)
 };(0, _hyperapp.app)({
   state: state,
-  view: function view(state, actions) {
+  view: function view(_ref, actions) {
+    var currentYear = _ref.currentYear,
+        playing = _ref.playing,
+        speed = _ref.speed;
+
     var addIslandTile = function addIslandTile(name) {
-      return (0, _hyperapp.h)(IslandTile, { island: name, population: getPopulation(state.year, name) });
+      return (0, _hyperapp.h)(IslandTile, { island: name, population: getPopulation(currentYear, name) });
     };
 
     return (0, _hyperapp.h)(
       "div",
       null,
       (0, _hyperapp.h)(
-        "button",
-        { onclick: actions.up },
-        state.year
+        "div",
+        { "class": "play-controls-wrapper" },
+        (0, _hyperapp.h)(PlayControls, {
+          playing: playing,
+          speed: speed,
+          toggle: actions.togglePlay,
+          slower: function slower() {
+            return actions.changeSpeed(1);
+          },
+          faster: function faster() {
+            return actions.changeSpeed(-1);
+          }
+        })
       ),
       (0, _hyperapp.h)(
         "div",
         { "class": "timeline-wrapper" },
-        (0, _hyperapp.h)(Timeline, { minYear: firstYear, maxYear: lastYear, currentYear: state.year })
+        (0, _hyperapp.h)(Timeline, { minYear: firstYear, maxYear: lastYear, currentYear: currentYear })
       ),
       (0, _hyperapp.h)(
         "div",
@@ -130,17 +150,88 @@ var state = {
     );
   },
   actions: {
-    up: function up(_ref) {
-      var year = _ref.year;
-      return { year: year == lastYear ? firstYear : year + 1 };
+    tick: function tick(_ref2, actions, currentTimeStamp) {
+      var playing = _ref2.playing,
+          currentYear = _ref2.currentYear,
+          lastFrameTimeStamp = _ref2.lastFrameTimeStamp,
+          speed = _ref2.speed;
+
+      if (playing) requestAnimationFrame(actions.tick);
+
+      if (currentTimeStamp - lastFrameTimeStamp > 1000 * speed) {
+        return {
+          currentYear: currentYear == lastYear ? firstYear : currentYear + 1,
+          lastFrameTimeStamp: currentTimeStamp
+        };
+      } else {
+        return {};
+      }
+    },
+
+    togglePlay: function togglePlay(_ref3, actions) {
+      var playing = _ref3.playing;
+
+      if (!playing) requestAnimationFrame(actions.tick);
+      return { playing: !playing };
+    },
+
+    changeSpeed: function changeSpeed(_ref4, actions) {
+      var speed = _ref4.speed;
+      var direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+
+      return { speed: Math.min(maxSpeed, Math.max(minSpeed, speed + speedChangeAmount * direction)) };
+    }
+  },
+  events: {
+    init: function init(state, actions) {
+      return actions.tick();
     }
   }
 });
 
-var Timeline = function Timeline(_ref2) {
-  var minYear = _ref2.minYear,
-      maxYear = _ref2.maxYear,
-      currentYear = _ref2.currentYear;
+// components
+
+var PlayControls = function PlayControls(_ref5) {
+  var playing = _ref5.playing,
+      speed = _ref5.speed,
+      slower = _ref5.slower,
+      toggle = _ref5.toggle,
+      faster = _ref5.faster;
+
+  var modifier = playing ? "play-controls__toggle--pause" : "play-controls__toggle--play";
+
+  return (0, _hyperapp.h)(
+    "div",
+    { "class": "play-controls" },
+    (0, _hyperapp.h)(
+      "div",
+      { "class": "play-controls__buttons" },
+      (0, _hyperapp.h)(
+        "div",
+        { onclick: slower, "class": "u-pushable play-controls__speed" },
+        "-"
+      ),
+      (0, _hyperapp.h)("div", { onclick: toggle, "class": "u-pushable play-controls__toggle " + modifier }),
+      (0, _hyperapp.h)(
+        "div",
+        { onclick: faster, "class": "u-pushable play-controls__speed" },
+        "+"
+      )
+    ),
+    (0, _hyperapp.h)(
+      "div",
+      { "class": "play-controls__yps" },
+      "(",
+      speed,
+      " seconds/year)"
+    )
+  );
+};
+
+var Timeline = function Timeline(_ref6) {
+  var minYear = _ref6.minYear,
+      maxYear = _ref6.maxYear,
+      currentYear = _ref6.currentYear;
 
   var range = function range(min, max) {
     return Array.apply(null, Array(max - min + 1)).map(function (_, i) {
@@ -171,9 +262,9 @@ var Timeline = function Timeline(_ref2) {
   );
 };
 
-var IslandTile = function IslandTile(_ref3) {
-  var island = _ref3.island,
-      population = _ref3.population;
+var IslandTile = function IslandTile(_ref7) {
+  var island = _ref7.island,
+      population = _ref7.population;
   return (0, _hyperapp.h)(
     "div",
     { "class": "island-tile" },
